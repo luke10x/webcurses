@@ -1,0 +1,19 @@
+# vim: set tabstop=2 shiftwidth=2 expandtab:
+
+version: "3"
+services:
+  wasm:
+    build:
+      context: ./wasm
+      dockerfile: Dockerfile
+    volumes:
+      - ./wasm:/mnt/wasm:rw
+      - ./src:/mnt/src:ro
+    ports:
+      - "${WASM_PORT:-9988}:8080"
+    working_dir: /mnt/wasm
+    entrypoint: "bash -c"
+    command:
+      - |
+        echo Starting a web server in $(pwd) for web-curses
+        python3 -mhttp.server 8080
