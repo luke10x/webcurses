@@ -8,7 +8,8 @@ build:
 	-o compiled.js \
 	-s WASM=1 \
 	-s FORCE_FILESYSTEM=1 \
-	-s EXIT_RUNTIME=1
+	-s EXIT_RUNTIME=1 \
+	-s ASYNCIFY
 
 clean:
 	rm -fr ./build/

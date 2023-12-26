@@ -6,5 +6,5 @@ build:
 	-o ./example
 
 clean:
-	rm ./example
+	rm -f ./example
 

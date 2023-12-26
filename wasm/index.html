@@ -7,33 +7,30 @@
 </head>
 <body>
   <div id="terminal"></div>
-  <textarea id="textarea">ddds</textarea>
-
   <script type="text/javascript">
     'use strict';
-    /* globals Module, Terminal, ENV */
-
-    var mvprintw;
     var term = new Terminal();
-
-    var textarea = document.getElementById('textarea')
     term.open(document.getElementById('terminal'));
     
     window.Module = {
       preRun: [() => {
         ENV.TERM = 'xterm';
+        FS.init(
+          () => {
+            console.log("taking one now")
+            // term.write("writeed")
+            return 101;
+          }, 
+          (input) => {
+            term.write(String.fromCharCode(input))
+            console.log("putting one new", String.fromCharCode(input))
+          },
+          null
+        );
       }],
       postRun: [function() {}],
-      print: (input) => {        
-        const stdout = input
-          .replace('[?1049h[22;0;0t[1;24r(B[m[4l[?7h[39;49m[39;49m[37m[40m', '')
-
-          term.write(stdout)
-          textarea.innerHTML += stdout
-        },
       printErr: (stderr) => console.error('printErr:', stderr)
     };
-
   </script>
   <script src="compiled.js" async></script>
 </body>
