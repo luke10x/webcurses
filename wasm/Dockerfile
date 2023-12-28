@@ -31,5 +31,6 @@ RUN make clean
 RUN emconfigure ./configure --enable-widec 
 RUN emmake make
 
-
+RUN ln -s /opt/ncurses-6.4/include/curses.h \
+  /opt/ncurses-6.4/include/curses-original.h
 

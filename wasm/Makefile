@@ -2,6 +2,7 @@
 build:
 	emcc /mnt/src/example.c \
 	-L /opt/ncurses-6.4/lib \
+	-I /mnt/include \
 	-I /opt/ncurses-6.4/include \
 	-lncursesw_g \
 	--preload-file /opt/lib/terminfo@/home/web_user/.terminfo \

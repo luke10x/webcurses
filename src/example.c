@@ -1,10 +1,6 @@
 #include <curses.h>
 #include <locale.h>
 
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#endif
-
 int main() {
   setlocale(LC_ALL, "");
   initscr();
@@ -39,22 +35,13 @@ int main() {
   while (max < 10) {
     int ch = getch();
 
-    // if (ch == -1) {
-    //   continue;; // Actually, this only happens when the user closes the active window
-    // }
     max ++;
-
     char str[100];
-    sprintf(str, "SS: %d\n", ch);
+    sprintf(str, "SET: %d\n", ch);
     mvwaddstr(local_win, max, 2, str);
 
     wrefresh(local_win);
-
-#ifdef EMSCRIPTEN
-    emscripten_sleep(1000);
-#endif
   }
-
 
   refresh();
 

@@ -9,6 +9,7 @@ services:
     volumes:
       - ./wasm:/mnt/wasm:rw
       - ./src:/mnt/src:ro
+      - ./include:/mnt/include:ro
     ports:
       - "${WASM_PORT:-9988}:8080"
     working_dir: /mnt/wasm
