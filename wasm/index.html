@@ -9,21 +9,32 @@
   <div id="terminal"></div>
   <script type="text/javascript">
     'use strict';
+
     var term = new Terminal();
     term.open(document.getElementById('terminal'));
-    
+    term.focus();
+
+    const pressedKeys = []
+
+    term.onKey(e => {
+      const raw = new TextEncoder().encode(e.key)
+      const bytes = Array.from(raw);
+      pressedKeys.push(...bytes)
+    });
+
     window.Module = {
       preRun: [() => {
         ENV.TERM = 'xterm';
         FS.init(
           () => {
-            console.log("taking one now")
-            // term.write("writeed")
-            return 101;
+            if (pressedKeys.length > 0) {
+              const first = pressedKeys.shift()
+              return first ;
+            }
+            return null;
           }, 
           (input) => {
-            term.write(String.fromCharCode(input))
-            // console.log("putting one new", String.fromCharCode(input))
+            term.write(new Uint8Array([input]))
           },
           null
         );

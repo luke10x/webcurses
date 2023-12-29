@@ -5,6 +5,8 @@ int main() {
   setlocale(LC_ALL, "");
   initscr();
   noecho();
+  keypad(stdscr, FALSE);   // Do not capture high key values, use esc sequences instead
+  nodelay(stdscr, FALSE);  // Start in blocking mode
   
   //   resize_term(24, 52);
   printw("- (0, 0)\n");
@@ -30,19 +32,36 @@ int main() {
 
   wattron(local_win, COLOR_PAIR(3));
 
-  int max = 1;
+  char str[100];
+  while (true) {
+    unsigned int ch = getch();
 
-  while (max < 10) {
-    int ch = getch();
+    if (ch == 27) {
+      nodelay(local_win, FALSE);
+      timeout(10);
 
-    max ++;
-    char str[100];
+      int next = getch();
+
+      nodelay(local_win, TRUE);
+      timeout(-1);
+
+      if (next == -1 || next == 27) {
+        goto end;
+      }
+
+      ungetch(next);
+    }
+
+ 
     sprintf(str, "SET: %d\n", ch);
-    mvwaddstr(local_win, max, 2, str);
+    waddstr(local_win, str);
 
     wrefresh(local_win);
   }
 
+end:
+
+  addstr("BAIGTAS DARBAS");
   refresh();
 
   getch();

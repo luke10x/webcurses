@@ -6,17 +6,59 @@
 
 #include <emscripten.h>
 
+int esc_sequence_started = false;
+int multibyte_sequence_started = false;
+int webcurses_delay = -1;
+
 int webcurses_wgetch(WINDOW* window) {
-    fprintf(stderr, "Wrapper");
-    
+    int ch;
+    do { 
 #ifdef EMSCRIPTEN
-    emscripten_sleep(100);
+    emscripten_sleep(webcurses_delay >= 0 ? webcurses_delay : 10);
 #endif
-    return 93;
+        ch = wgetch(window);
 
-    return wgetch(window);
+        if (ch == -1) {
+            multibyte_sequence_started = false;
+            esc_sequence_started = false;
+            if (webcurses_delay >= 0) {
+                return -1;
+            }
+            continue;
+        }
+        if (ch == 27) {
+            esc_sequence_started = true;
+            return 27;
+        }
+        if (!esc_sequence_started) {
+            int next_ch;
+
+            wtimeout(window, -1);
+            nodelay(window, TRUE);
+
+            next_ch = wgetch(window);
+            if (next_ch != -1) {
+                ungetch(next_ch);
+                multibyte_sequence_started = true;
+            }
+
+            wtimeout(window, webcurses_delay);
+            nodelay(window, FALSE);
+        }
+        if (ch != -1) {
+            if (multibyte_sequence_started) {
+                return ch + 128;
+            }
+            return ch;
+        }
+    } while (true);
 }
-
 #define wgetch(win) webcurses_wgetch(win)
+
+void webcurses_wtimeout (WINDOW * win, int delay) {
+    webcurses_delay = delay;
+    wtimeout(win, delay);
+}
+#define wtimeout(win, delay) webcurses_wtimeout(win, delay);
 
 #endif
