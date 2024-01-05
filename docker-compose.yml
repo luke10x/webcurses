@@ -6,6 +6,8 @@ services:
     build:
       context: ./wasm
       dockerfile: Dockerfile
+    # For `docker-compose build wasm --push`
+    image: luke10x/webcurses:latest
     volumes:
       - ./wasm:/mnt/wasm:rw
       - ./src:/mnt/src:ro
@@ -18,3 +20,13 @@ services:
       - |
         echo Starting a web server in $(pwd) for web-curses
         python3 -mhttp.server 8080
+
+    # node:
+    #   image: node:16.19.0-buster-slim
+    #   working_dir: /mnt/node
+    #   volumes:
+    #     - ./node:/mnt/node:rw
+    #   entrypoint: "bash -c"
+    #   command:
+    #     - |
+    #       npm run build
