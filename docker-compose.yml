@@ -4,8 +4,8 @@ version: "3"
 services:
   wasm:
     build:
-      context: ./wasm
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: wasm/Dockerfile
     # For `docker-compose build wasm --push`
     image: luke10x/webcurses:latest
     volumes:

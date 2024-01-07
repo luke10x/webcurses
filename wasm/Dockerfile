@@ -39,3 +39,5 @@ RUN ln -s /opt/ncurses-6.4/include/curses.h \
 
 ENV C_INCLUDE_PATH="/mnt/include:/opt/ncurses-6.4/include"
 RUN ln -s /opt/ncurses-6.4/lib/* /emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/
+
+COPY ./include /mnt/include

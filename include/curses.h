@@ -6,11 +6,11 @@
 
 #include <emscripten.h>
 
-int esc_sequence_started = false;
-int multibyte_sequence_started = false;
-int webcurses_delay = -1;
+static int esc_sequence_started = false;
+static int multibyte_sequence_started = false;
+static int webcurses_delay = -1;
 
-int webcurses_wgetch(WINDOW* window) {
+static int webcurses_wgetch(WINDOW* window) {
     int ch;
     do { 
 #ifdef EMSCRIPTEN
@@ -55,10 +55,14 @@ int webcurses_wgetch(WINDOW* window) {
 }
 #define wgetch(win) webcurses_wgetch(win)
 
-void webcurses_wtimeout (WINDOW * win, int delay) {
+static void webcurses_wtimeout (WINDOW * win, int delay) {
     webcurses_delay = delay;
     wtimeout(win, delay);
 }
 #define wtimeout(win, delay) webcurses_wtimeout(win, delay);
 
+// Rogue requires it
+#define _getch() getch()
+
 #endif
+
