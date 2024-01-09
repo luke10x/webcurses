@@ -9,7 +9,7 @@ WORKDIR  /opt/ncurses-6.4
 
 # build native ncurses first
 RUN mkdir /opt/ncurses-native
-RUN ./configure --enable-widec --prefix=/opt/ncurses-native \
+RUN ./configure --prefix=/opt/ncurses-native \
   && make \
   && make install
 
@@ -30,14 +30,16 @@ RUN sed -i 's|./make_hash|./make_hash_native|g' ncurses/tinfo/MKuserdefs.sh
 
 # Now build ncurses for WASM
 RUN make clean
+RUN emconfigure ./configure 
+RUN emmake make
 RUN emconfigure ./configure --enable-widec 
 RUN emmake make
 
-# Some functions like 
+# Some functions like getch have to be enhanced to work in WASM
 RUN ln -s /opt/ncurses-6.4/include/curses.h \
   /opt/ncurses-6.4/include/curses-original.h
+COPY ./include /mnt/include
 
+# For convenience, to avoid passing library paths with -I and -L
 ENV C_INCLUDE_PATH="/mnt/include:/opt/ncurses-6.4/include"
 RUN ln -s /opt/ncurses-6.4/lib/* /emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/
-
-COPY ./include /mnt/include

@@ -22,12 +22,14 @@ static int webcurses_wgetch(WINDOW* window) {
             multibyte_sequence_started = false;
             esc_sequence_started = false;
             if (webcurses_delay >= 0) {
+                fprintf(stderr, "DEBUG GETCH: -1\n");
                 return -1;
             }
             continue;
         }
         if (ch == 27) {
             esc_sequence_started = true;
+            fprintf(stderr, "DEBUG GETCH: ESC\n");
             return 27;
         }
         if (!esc_sequence_started) {
@@ -47,8 +49,11 @@ static int webcurses_wgetch(WINDOW* window) {
         }
         if (ch != -1) {
             if (multibyte_sequence_started) {
+                fprintf(stderr, "DEBUG GETCH: %d (MB char)\n", ch + 128);
                 return ch + 128;
             }
+            fprintf(stderr, "DEBUG GETCH: %d\n", ch);
+            
             return ch;
         }
     } while (true);
