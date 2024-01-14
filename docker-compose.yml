@@ -10,23 +10,19 @@ services:
     image: luke10x/webcurses:latest
     volumes:
       - ./wasm:/mnt/wasm:rw
-      - ./src:/mnt/src:ro
+      - ./terminal:/mnt/terminal:rw
+      - ./examples:/mnt/examples:rw
       - ./include:/mnt/include:ro
-    ports:
-      - "${WASM_PORT:-9988}:8080"
-    working_dir: /mnt/wasm
-    entrypoint: "bash -c"
-    command:
-      - |
-        echo Starting a web server in $(pwd) for web-curses
-        python3 -mhttp.server 8080
 
-    # node:
-    #   image: node:16.19.0-buster-slim
-    #   working_dir: /mnt/node
-    #   volumes:
-    #     - ./node:/mnt/node:rw
-    #   entrypoint: "bash -c"
-    #   command:
-    #     - |
-    #       npm run build
+    working_dir: /mnt/wasm
+    
+  website:
+    image: nginx
+    volumes:
+      - ./website/index.html:/usr/share/nginx/html/index.html
+      - ./website/favicon.ico:/usr/share/nginx/html/favicon.ico
+      - ./terminal:/usr/share/nginx/html/terminal:ro
+      - ./examples:/usr/share/nginx/html/examples:ro
+      - ./wasm:/usr/share/nginx/html/wasm:ro
+    ports:
+      - "${WASM_PORT:-9988}:80"
