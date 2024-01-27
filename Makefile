@@ -26,6 +26,12 @@ examples/build:
 		$$(pkg-config --libs ncurses) \
 		-o ./examples/build/mouse
 
+	gcc ./examples/panel.c \
+		$$(pkg-config --cflags ncurses) \
+		$$(pkg-config --libs ncurses) \
+		-lpanel \
+		-o ./examples/build/panel
+
 clean:
 	rm -rf ./examples/build
 
