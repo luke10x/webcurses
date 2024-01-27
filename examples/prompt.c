@@ -1,7 +1,7 @@
 // gcc prompt.c -lncurses -o ./prompt
 
 #include <curses.h>
-#include <string.h>
+#include <strings.h>
 
 void read_line(char* buffer, int buf_size) {
     int ch, index = 0;
