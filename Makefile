@@ -1,36 +1,18 @@
 # vim: tabstop=4 shiftwidth=4 noexpandtab
-examples/build:
+
+NCURSES_DIR := $(shell brew --prefix ncurses)
+CFLAGS := -I$(NCURSES_DIR)/include
+SRCDIR := examples
+BUILDDIR := $(SRCDIR)/build
+SRCS := $(wildcard $(SRCDIR)/*.c)
+EXES := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%, $(SRCS))
+
+$(BUILDDIR)/%: $(SRCDIR)/%.c
 	mkdir -p ./examples/build
-	gcc ./examples/example.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-o ./examples/build/example
+	gcc $(CFLAGS) -o $@ $< -L$(NCURSES_DIR)/lib -lncurses -lpanel -lmenu
 
-	gcc ./examples/prompt.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-o ./examples/build/prompt
-
-	gcc ./examples/window.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-o ./examples/build/window
-
-	gcc ./examples/keyboard.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-o ./examples/build/keyboard
-
-	gcc ./examples/mouse.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-o ./examples/build/mouse
-
-	gcc ./examples/panel.c \
-		$$(pkg-config --cflags ncurses) \
-		$$(pkg-config --libs ncurses) \
-		-lpanel \
-		-o ./examples/build/panel
+$(BUILDDIR): $(EXES) 
+all: $(BUILDDIR)
 
 clean:
 	rm -rf ./examples/build
